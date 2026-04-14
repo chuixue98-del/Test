@@ -366,7 +366,6 @@
     <label>Take or upload product photos (max 3)</label>
     <div class="photo-grid">
       <label class="photo-slot" id="slot0">
-  <!-- ✅ 用户直接点击 input（iOS 允许） -->
   <input
     type="file"
     accept="image/*"
@@ -557,11 +556,11 @@
       const lat = coords.latitude.toFixed(6);
       const lon = coords.longitude.toFixed(6);
 
-      // 写入输入框（可编辑）
+      // map input
       const value = `${lat}, ${lon}`;
       document.getElementById('locationInput').value = value;
 
-      // 地图链接（Apple / Google Maps 通用）
+      // maps
       const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
 
       const link = document.getElementById('openMapLink');
