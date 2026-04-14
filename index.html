@@ -365,18 +365,18 @@
   <div class="card">
     <label>Take or upload product photos (max 3)</label>
     <div class="photo-grid">
-      <div class="photo-slot" id="slot0" onclick="triggerPhoto(0)">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16.5v-9m-4.5 4.5h9"/><rect x="2" y="6.5" width="20" height="15" rx="3"/><path d="M16 6.5l-1.5-3h-5L8 6.5"/></svg>
-        <span>Add photo</span>
-      </div>
-      <div class="photo-slot" id="slot1" style="opacity:0.35;pointer-events:none;">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13v-7m-3.5 3.5h7"/><rect x="1.5" y="5" width="17" height="13" rx="2.5"/><path d="M13 5l-1.25-2.5h-3.5L7 5"/></svg>
-      </div>
-      <div class="photo-slot" id="slot2" style="opacity:0.35;pointer-events:none;">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13v-7m-3.5 3.5h7"/><rect x="1.5" y="5" width="17" height="13" rx="2.5"/><path d="M13 5l-1.25-2.5h-3.5L7 5"/></svg>
-      </div>
-    </div>
-    <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+      <label class="photo-slot" id="slot0">
+  <!-- ✅ 用户直接点击 input（iOS 允许） -->
+  <input
+    type="file"
+    accept="image/*"
+    capture="environment"
+    onchange="handlePhoto(event)"
+    style="display:none"
+  >
+  <svg ...></svg>
+  <span>Add photo</span>
+</label>
   </div>
 
   <div class="section-label">Location</div>
@@ -679,5 +679,9 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
+// === Alias for HTML onclick compatibility ===
+  function getLocation() {
+    getLocationSmart();
+  }
 </body>
 </html>
