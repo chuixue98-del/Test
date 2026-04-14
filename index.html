@@ -192,7 +192,13 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   }
 
-  #photoInput { display: none; }
+ #photoInput {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
 
   .location-row { display: flex; gap: 8px; align-items: flex-start; }
   .location-input-wrap { flex: 1; }
@@ -533,33 +539,68 @@
     }
   }
 
-  function getLocation() {
-    const btn = document.getElementById('locateBtn');
-    btn.classList.add('loading');
-    btn.textContent = '⏳';
-    if (!navigator.geolocation) {
-      alert('Geolocation not supported on this device');
-      btn.classList.remove('loading'); btn.textContent = '📍';
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude, longitude, accuracy } }) => {
-        document.getElementById('locationInput').value = ${latitude.toFixed(5)}, ${longitude.toFixed(5)};
-        const hint = document.getElementById('locationHint');
-        hint.textContent = ✓ GPS captured — accuracy ±${Math.round(accuracy)}m;
-        hint.className = 'location-hint success-hint';
-        btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = '✓';
-        setTimeout(() => { btn.textContent = '📍'; btn.classList.remove('success'); }, 3000);
-        clearError(document.getElementById('locationField'));
-        updateProgress();
-      },
-      () => {
-        document.getElementById('locationHint').textContent = 'Location failed — please type manually';
-        btn.classList.remove('loading'); btn.textContent = '📍';
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+ function getLocationSmart() {
+  const btn = document.getElementById('locateBtn');
+  const hint = document.getElementById('locationHint');
+
+  if (!navigator.geolocation) {
+    hint.textContent = 'This browser does not support GPS. Please type location manually.';
+    return;
   }
+
+  btn.classList.add('loading');
+  btn.textContent = '⏳';
+  hint.textContent = 'Getting location… please allow access';
+
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => {
+      const lat = coords.latitude.toFixed(6);
+      const lon = coords.longitude.toFixed(6);
+
+      // 写入输入框（可编辑）
+      const value = `${lat}, ${lon}`;
+      document.getElementById('locationInput').value = value;
+
+      // 地图链接（Apple / Google Maps 通用）
+      const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+
+      const link = document.getElementById('openMapLink');
+      link.href = mapUrl;
+      link.style.display = 'inline-block';
+
+      hint.textContent = `GPS captured (±${Math.round(coords.accuracy)} m)`;
+      hint.className = 'location-hint success-hint';
+
+      btn.classList.remove('loading');
+      btn.textContent = '✓';
+
+      setTimeout(() => {
+        btn.textContent = '📍';
+      }, 2000);
+
+      updateProgress();
+      clearError(document.getElementById('locationField'));
+    },
+
+    (err) => {
+      btn.classList.remove('loading');
+      btn.textContent = '📍';
+
+      let msg = 'Location unavailable. Please type location manually.';
+      if (err.code === 1) msg = 'Location permission denied. Please type manually.';
+      if (err.code === 2) msg = 'Location position unavailable.';
+      if (err.code === 3) msg = 'Location request timed out.';
+
+      hint.textContent = msg;
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 8000,
+      maximumAge: 0
+    }
+  );
+}
 
   function setSeverity(btn) {
     document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
