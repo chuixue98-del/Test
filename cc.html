@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Product Complaint">
+<meta name="theme-color" content="#1d6fff">
+<title>Product Complaint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --surface: #ffffff;
+    --surface2: #f5f7ff;
+    --border: #dde4f5;
+    --border-focus: #1d6fff;
+    --accent: #1d6fff;
+    --accent-light: #e8f0ff;
+    --accent2: #5b9dff;
+    --text: #0f1b3d;
+    --text2: #5a6a8a;
+    --text3: #9aaac8;
+    --success: #00a86b;
+    --success-light: #e6f7f2;
+    --warn: #e07b00;
+    --danger: #d93025;
+    --danger-light: #fdecea;
+    --radius: 16px;
+    --shadow-card: 0 1px 3px rgba(15,27,61,0.06), 0 4px 16px rgba(29,111,255,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 48px;
+  }
+
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 8px rgba(29,111,255,0.07);
+  }
+
+  .header-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 15px;
+  }
+
+  .header h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .header-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    color: var(--accent);
+    margin-left: auto;
+    letter-spacing: 0.12em;
+    background: var(--accent-light);
+    padding: 3px 8px; border-radius: 20px;
+  }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-label { font-size: 11px; color: var(--text3); font-weight: 500; }
+  .progress-pct { font-size: 11px; color: var(--accent); font-weight: 700; font-family: 'Space Mono', monospace; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .section-label {
+    font-size: 11px; font-weight: 600; color: var(--text3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px; margin-top: 4px; padding-left: 4px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px; margin-bottom: 12px;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.35s ease both;
+  }
+
+  .card:focus-within {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(29,111,255,0.1), var(--shadow-card);
+  }
+
+  .card:nth-child(1){animation-delay:0.04s}
+  .card:nth-child(2){animation-delay:0.08s}
+  .card:nth-child(3){animation-delay:0.12s}
+  .card:nth-child(4){animation-delay:0.16s}
+  .card:nth-child(5){animation-delay:0.20s}
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--text2); margin-bottom: 7px;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 11px 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(29,111,255,0.1);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+  textarea { resize: none; height: 95px; line-height: 1.6; }
+
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aaac8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    padding-right: 36px;
+  }
+
+  select option { background: #fff; color: var(--text); }
+
+  .other-input { margin-top: 8px; display: none; }
+  .other-input.show { display: block; }
+
+  .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 4px; }
+
+  .photo-slot {
+    aspect-ratio: 1; border-radius: 10px;
+    border: 1.5px dashed var(--border);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    overflow: hidden; position: relative;
+    background: var(--surface2);
+  }
+
+  .photo-slot:hover, .photo-slot:active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .photo-slot svg { opacity: 0.35; color: var(--accent); }
+  .photo-slot span { font-size: 10px; color: var(--text3); margin-top: 5px; font-weight: 500; }
+
+  .photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+
+  .photo-slot .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--danger);
+    cursor: pointer; z-index: 2; border: none; line-height: 1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+
+  #photoInput { display: none; }
+
+  .location-row { display: flex; gap: 8px; align-items: flex-start; }
+  .location-input-wrap { flex: 1; }
+
+  .locate-btn {
+    flex-shrink: 0; width: 44px; height: 44px;
+    background: var(--accent-light);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--accent);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 18px;
+  }
+
+  .locate-btn:hover { background: var(--accent); border-color: var(--accent); filter: brightness(1.05); }
+  .locate-btn.loading { animation: pulse 0.9s infinite; }
+  .locate-btn.success { background: var(--success-light); border-color: var(--success); }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+  .location-hint { font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.5; }
+  .location-hint.success-hint { color: var(--success); }
+
+  .severity-row { display: flex; gap: 8px; margin-top: 2px; }
+
+  .severity-btn {
+    flex: 1; padding: 9px 6px;
+    border-radius: 10px; border: 1.5px solid var(--border);
+    background: var(--surface2); color: var(--text2);
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+
+  .severity-btn.active[data-val="low"]  { background: var(--success-light); border-color: var(--success); color: var(--success); }
+  .severity-btn.active[data-val="mid"]  { background: #fff8ed; border-color: var(--warn); color: var(--warn); }
+  .severity-btn.active[data-val="high"] { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+  .char-count { font-size: 10px; color: var(--text3); text-align: right; margin-top: 4px; font-family: 'Space Mono', monospace; }
+
+  .field-error { font-size: 11px; color: var(--danger); margin-top: 5px; display: none; font-weight: 500; }
+
+  .has-error input, .has-error textarea, .has-error select {
+    border-color: var(--danger); background: var(--danger-light);
+  }
+
+  .has-error .field-error { display: block; }
+
+  .submit-btn {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: white;
+    border: none; border-radius: var(--radius);
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.01em;
+    transition: all 0.2s; margin-top: 8px;
+    box-shadow: 0 4px 16px rgba(29,111,255,0.3);
+  }
+
+  .submit-btn:hover { background: #1560e8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,111,255,0.35); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .install-banner {
+    display: none;
+    background: var(--accent-light);
+    border: 1.5px solid rgba(29,111,255,0.2);
+    border-radius: 12px; padding: 11px 14px; margin-bottom: 16px;
+    align-items: center; gap: 10px;
+    font-size: 12px; color: var(--accent); font-weight: 500;
+  }
+
+  .install-banner.show { display: flex; }
+
+  .install-banner button {
+    margin-left: auto; flex-shrink: 0;
+    background: var(--accent); color: white;
+    border: none; border-radius: 8px;
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  .success-screen {
+    display: none; text-align: center;
+    padding: 56px 20px; animation: fadeUp 0.4s ease;
+  }
+
+  .success-screen.show { display: block; }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--success-light); border: 2px solid var(--success);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 32px; color: var(--success);
+  }
+
+  .success-screen h2 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .success-screen p { color: var(--text2); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+
+  .ticket-id {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: var(--accent); background: var(--accent-light);
+    border: 1.5px solid rgba(29,111,255,0.2);
+    border-radius: 10px; padding: 12px 24px;
+    display: inline-block; margin-bottom: 28px; letter-spacing: 0.1em;
+  }
+
+  .reset-btn {
+    background: transparent; border: 1.5px solid var(--border);
+    color: var(--text2); padding: 12px 28px; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">📋</div>
+  <h1>Product Complaint</h1>
+  <span class="header-sub">INTERNAL</span>
+</div>
+
+<div class="container" id="formView">
+
+  <div class="install-banner" id="installBanner">
+    📲 Add to Home Screen for quick access
+    <button onclick="installApp()">Add</button>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-label">Form completion</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Product</div>
+
+  <div class="card">
+    <div id="productNameField">
+      <label>Product Name *</label>
+      <select id="productSelect" onchange="handleProductSelect(); updateProgress(); clearError(document.getElementById('productNameField'))">
+        <option value="">— Select a product —</option>
+        <option value="Evian">Evian</option>
+        <option value="Alpro">Alpro</option>
+        <option value="Aptamil">Aptamil</option>
+        <option value="Activia">Activia</option>
+        <option value="Other">Other (specify below)</option>
+      </select>
+      <div class="other-input" id="otherProductWrap">
+        <input type="text" id="otherProduct" placeholder="Enter product name..." maxlength="80" oninput="updateProgress()">
+      </div>
+      <div class="field-error">Please select a product</div>
+    </div>
+  </div>
+
+  <div class="section-label">Photos</div>
+
+  <div class="card">
+    <label>Take or upload product photos (max 3)</label>
+    <div class="photo-grid">
+      <div class="photo-slot" id="slot0" onclick="triggerPhoto(0)">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16.5v-9m-4.5 4.5h9"/><rect x="2" y="6.5" width="20" height="15" rx="3"/><path d="M16 6.5l-1.5-3h-5L8 6.5"/></svg>
+        <span>Add photo</span>
+      </div>
+      <div class="photo-slot" id="slot1" style="opacity:0.35;pointer-events:none;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13v-7m-3.5 3.5h7"/><rect x="1.5" y="5" width="17" height="13" rx="2.5"/><path d="M13 5l-1.25-2.5h-3.5L7 5"/></svg>
+      </div>
+      <div class="photo-slot" id="slot2" style="opacity:0.35;pointer-events:none;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13v-7m-3.5 3.5h7"/><rect x="1.5" y="5" width="17" height="13" rx="2.5"/><path d="M13 5l-1.25-2.5h-3.5L7 5"/></svg>
+      </div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+  </div>
+
+  <div class="section-label">Location</div>
+
+  <div class="card">
+    <label>Where was the problem found? *</label>
+    <div class="location-row">
+      <div class="location-input-wrap" id="locationField">
+        <input type="text" id="locationInput"
+          placeholder="e.g. 3F Warehouse, Zone B Production Line..."
+          maxlength="100"
+          oninput="updateProgress(); clearError(document.getElementById('locationField'))">
+        <div class="field-error">Please enter the location</div>
+      </div>
+      <button class="locate-btn" id="locateBtn" onclick="getLocation()" title="Get GPS location">📍</button>
+    </div>
+    <div class="location-hint" id="locationHint">Tap 📍 to capture GPS coordinates automatically</div>
+  </div>
+
+  <div class="section-label">Issue</div>
+
+  <div class="card">
+    <div id="issueDescField">
+      <label>Issue Description *</label>
+      <textarea id="issueDesc"
+        placeholder="What exactly is wrong? When was it noticed? What is the impact..."
+        maxlength="300"
+        oninput="updateIssueDescCount(); updateProgress(); clearError(this.parentElement)"
+        style="height:90px;"></textarea>
+      <div class="char-count"><span id="issueDescCount">0</span> / 300</div>
+      <div class="field-error">Please describe the issue</div>
+    </div>
+
+    <label style="margin-top:16px;">Severity</label>
+    <div class="severity-row">
+      <button class="severity-btn" data-val="low"  onclick="setSeverity(this)">⚪ Minor</button>
+      <button class="severity-btn" data-val="mid"  onclick="setSeverity(this)">🟡 Moderate</button>
+      <button class="severity-btn" data-val="high" onclick="setSeverity(this)">🔴 Urgent</button>
+    </div>
+  </div>
+
+  <div class="section-label">Additional Notes</div>
+
+  <div class="card">
+    <label>Extra context (optional)</label>
+    <textarea id="description"
+      placeholder="Related incidents, suggestions, or anything else relevant..."
+      maxlength="500"
+      oninput="updateCharCount()"></textarea>
+    <div class="char-count"><span id="charCount">0</span> / 500</div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">Submit Complaint</button>
+</div>
+
+<div class="container">
+  <div class="success-screen" id="successView">
+    <div class="success-icon">✓</div>
+    <h2>Complaint Submitted</h2>
+    <p>Your complaint has been recorded.<br>Our team will follow up within 1–2 working days.</p>
+    <div class="ticket-id" id="ticketId">TICKET #----</div><br>
+    <button class="reset-btn" onclick="resetForm()">Submit another</button>
+  </div>
+</div>
+
+<script>
+  let photos = [null, null, null];
+  let currentSlot = 0;
+  let severity = '';
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBanner').classList.add('show');
+  });
+
+  async function installApp() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') document.getElementById('installBanner').classList.remove('show');
+    deferredPrompt = null;
+  }
+
+  function handleProductSelect() {
+    const val = document.getElementById('productSelect').value;
+    document.getElementById('otherProductWrap').classList.toggle('show', val === 'Other');
+  }
+
+  function getProductName() {
+    const sel = document.getElementById('productSelect').value;
+    if (sel === 'Other') return document.getElementById('otherProduct').value.trim();
+    return sel;
+  }
+
+  function triggerPhoto(slot) {
+    currentSlot = slot;
+    document.getElementById('photoInput').click();
+  }
+
+  function handlePhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      photos[currentSlot] = { file, dataUrl: ev.target.result };
+      renderPhotoSlot(currentSlot, ev.target.result);
+      unlockNextSlot();
+      updateProgress();
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }
+
+  function renderPhotoSlot(idx, dataUrl) {
+    const slot = document.getElementById('slot' + idx);
+    slot.innerHTML = <img src="${dataUrl}" alt="photo"><button class="remove-btn" onclick="removePhoto(event,${idx})">×</button>;
+    slot.style.pointerEvents = 'auto';
+    slot.style.opacity = '1';
+    slot.onclick = null;
+  }
+
+  function removePhoto(e, idx) {
+    e.stopPropagation();
+    photos[idx] = null;
+    reorderPhotoSlots();
+    updateProgress();
+  }
+
+  function reorderPhotoSlots() {
+    const filled = photos.filter(p => p !== null);
+    photos = [null, null, null];
+    filled.forEach((p, i) => photos[i] = p);
+    for (let i = 0; i < 3; i++) {
+      const slot = document.getElementById('slot' + i);
+      if (photos[i]) {
+        renderPhotoSlot(i, photos[i].dataUrl);
+      } else {
+        const enabled = i === 0 || photos[i - 1];
+        slot.style.opacity = enabled ? '1' : '0.35';
+        slot.style.pointerEvents = enabled ? 'auto' : 'none';
+        slot.onclick = enabled ? () => triggerPhoto(i) : null;
+        slot.innerHTML = i === 0
+          ? <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16.5v-9m-4.5 4.5h9"/><rect x="2" y="6.5" width="20" height="15" rx="3"/><path d="M16 6.5l-1.5-3h-5L8 6.5"/></svg><span>Add photo</span>
+          : <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13v-7m-3.5 3.5h7"/><rect x="1.5" y="5" width="17" height="13" rx="2.5"/><path d="M13 5l-1.25-2.5h-3.5L7 5"/></svg>;
+      }
+    }
+  }
+
+  function unlockNextSlot() {
+    for (let i = 0; i < 3; i++) {
+      if (!photos[i]) {
+        const slot = document.getElementById('slot' + i);
+        slot.style.opacity = '1';
+        slot.style.pointerEvents = 'auto';
+        slot.onclick = () => triggerPhoto(i);
+        break;
+      }
+    }
+  }
+
+  function getLocation() {
+    const btn = document.getElementById('locateBtn');
+    btn.classList.add('loading');
+    btn.textContent = '⏳';
+    if (!navigator.geolocation) {
+      alert('Geolocation not supported on this device');
+      btn.classList.remove('loading'); btn.textContent = '📍';
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude, accuracy } }) => {
+        document.getElementById('locationInput').value = ${latitude.toFixed(5)}, ${longitude.toFixed(5)};
+        const hint = document.getElementById('locationHint');
+        hint.textContent = ✓ GPS captured — accuracy ±${Math.round(accuracy)}m;
+        hint.className = 'location-hint success-hint';
+        btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = '✓';
+        setTimeout(() => { btn.textContent = '📍'; btn.classList.remove('success'); }, 3000);
+        clearError(document.getElementById('locationField'));
+        updateProgress();
+      },
+      () => {
+        document.getElementById('locationHint').textContent = 'Location failed — please type manually';
+        btn.classList.remove('loading'); btn.textContent = '📍';
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function setSeverity(btn) {
+    document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    severity = btn.dataset.val;
+  }
+
+  function updateIssueDescCount() {
+    document.getElementById('issueDescCount').textContent = document.getElementById('issueDesc').value.length;
+  }
+
+  function updateCharCount() {
+    document.getElementById('charCount').textContent = document.getElementById('description').value.length;
+  }
+
+  function updateProgress() {
+    const score = [getProductName(), document.getElementById('locationInput').value.trim(), document.getElementById('issueDesc').value.trim()].filter(Boolean).length + (photos.some(p => p) ? 1 : 0);
+    const pct = Math.round(score / 4 * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  function clearError(el) { el.classList.remove('has-error'); }
+
+  function validate() {
+    let ok = true;
+    if (!getProductName()) { document.getElementById('productNameField').classList.add('has-error'); ok = false; }
+    if (!document.getElementById('locationInput').value.trim()) { document.getElementById('locationField').classList.add('has-error'); ok = false; }
+    if (!document.getElementById('issueDesc').value.trim()) { document.getElementById('issueDescField').classList.add('has-error'); ok = false; }
+    return ok;
+  }
+
+  function submitForm() {
+    if (!validate()) {
+      document.querySelector('.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    const payload = {
+      productName: getProductName(),
+      location: document.getElementById('locationInput').value.trim(),
+      issueDescription: document.getElementById('issueDesc').value.trim(),
+      additionalNotes: document.getElementById('description').value.trim(),
+      severity: severity || 'low',
+      photoCount: photos.filter(p => p).length,
+      timestamp: new Date().toISOString(),
+    };
+    console.log('Payload to SharePoint:', payload);
+    // TODO: submitToSharePoint(payload);
+    setTimeout(showSuccess, 1200);
+  }
+
+  function showSuccess() {
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('successView').classList.add('show');
+    document.getElementById('ticketId').textContent = 'TICKET #CP-' + Date.now().toString(36).toUpperCase().slice(-6);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('formView').style.display = 'block';
+    document.getElementById('successView').classList.remove('show');
+    ['productSelect','locationInput','issueDesc','description','otherProduct'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    document.getElementById('otherProductWrap').classList.remove('show');
+    document.getElementById('locationHint').textContent = 'Tap 📍 to capture GPS coordinates automatically';
+    document.getElementById('locationHint').className = 'location-hint';
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('issueDescCount').textContent = '0';
+    photos = [null, null, null]; severity = '';
+    document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Submit Complaint';
+    reorderPhotoSlots(); updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
